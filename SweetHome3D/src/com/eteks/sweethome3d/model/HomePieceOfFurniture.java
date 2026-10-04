@@ -56,12 +56,12 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
   /** 
    * The properties on which home furniture may be sorted.  
    */
-  public enum SortableProperty {CATALOG_ID, NAME, WIDTH, DEPTH, HEIGHT, MOVABLE, 
+  public enum SortableProperty {CATALOG_ID, NAME, WIDTH, DEPTH, HEIGHT, VOLUME, MOVABLE,
                                 DOOR_OR_WINDOW, COLOR, TEXTURE, VISIBLE, X, Y, ELEVATION, ANGLE,
                                 PRICE, VALUE_ADDED_TAX, VALUE_ADDED_TAX_PERCENTAGE, PRICE_VALUE_ADDED_TAX_INCLUDED, LEVEL};
   private static final Map<SortableProperty, Comparator<HomePieceOfFurniture>> SORTABLE_PROPERTY_COMPARATORS;
   private static final float [][] IDENTITY = new float [][] {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-  
+
   static {
     final Collator collator = Collator.getInstance();
     // Init piece property comparators
@@ -73,7 +73,7 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
           } else if (piece1.catalogId == null) {
             return -1;
           } else if (piece2.catalogId == null) {
-            return 1; 
+            return 1;
           } else {
             return collator.compare(piece1.catalogId, piece2.catalogId);
           }
@@ -86,7 +86,7 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
           } else if (piece1.name == null) {
             return -1;
           } else if (piece2.name == null) {
-            return 1; 
+            return 1;
           } else {
             return collator.compare(piece1.name, piece2.name);
           }
@@ -107,6 +107,11 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
           return HomePieceOfFurniture.compare(piece1.depth, piece2.depth);
         }
       });
+    SORTABLE_PROPERTY_COMPARATORS.put(SortableProperty.VOLUME, new Comparator<HomePieceOfFurniture>() {
+      public int compare(HomePieceOfFurniture piece1, HomePieceOfFurniture piece2) {
+        return HomePieceOfFurniture.compare(piece1.getVolume(), piece2.getVolume());
+      }
+    });
     SORTABLE_PROPERTY_COMPARATORS.put(SortableProperty.MOVABLE, new Comparator<HomePieceOfFurniture>() {
         public int compare(HomePieceOfFurniture piece1, HomePieceOfFurniture piece2) {
           return HomePieceOfFurniture.compare(piece1.movable, piece2.movable);
@@ -120,11 +125,11 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
     SORTABLE_PROPERTY_COMPARATORS.put(SortableProperty.COLOR, new Comparator<HomePieceOfFurniture>() {
         public int compare(HomePieceOfFurniture piece1, HomePieceOfFurniture piece2) {
           if (piece1.color == piece2.color) {
-            return 0; 
+            return 0;
           } else if (piece1.color == null) {
             return -1;
           } else if (piece2.color == null) {
-            return 1; 
+            return 1;
           } else {
             return piece1.color - piece2.color;
           }
@@ -133,11 +138,11 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
     SORTABLE_PROPERTY_COMPARATORS.put(SortableProperty.TEXTURE, new Comparator<HomePieceOfFurniture>() {
         public int compare(HomePieceOfFurniture piece1, HomePieceOfFurniture piece2) {
           if (piece1.texture == piece2.texture) {
-            return 0; 
+            return 0;
           } else if (piece1.texture == null) {
             return -1;
           } else if (piece2.texture == null) {
-            return 1; 
+            return 1;
           } else {
             return collator.compare(piece1.texture.getName(), piece2.texture.getName());
           }
@@ -194,13 +199,13 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
         }
       });
   }
-  
+
   private static int compare(float value1, float value2) {
     return Float.compare(value1, value2);
   }
-  
+
   private static int compare(boolean value1, boolean value2) {
-    return value1 == value2 
+    return value1 == value2
                ? 0
                : (value1 ? -1 : 1);
   }
@@ -586,6 +591,13 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
     } else {
       throw new IllegalStateException("Piece isn't resizable");
     }
+  }
+
+  /**
+   * Returns the volume of this piece of furniture.
+   */
+  public float getVolume() {
+    return (getDepth() * getWidth() * getHeight());
   }
 
   /**
